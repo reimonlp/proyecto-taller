@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useContext } from 'react'
 import { UserContext } from '../App'
+import Tiempo from './Tiempo'
 
 const Message = ( {text, username, ts, own} ) => {
   return (
@@ -9,7 +10,7 @@ const Message = ( {text, username, ts, own} ) => {
         <p className="text">{text}</p>
         { own ? '' : <div className='username'>{username}</div> }
       </div>
-      <footer>{ts}</footer>
+      <footer><Tiempo ts={ts} /></footer>
     </div>
   )
 }
