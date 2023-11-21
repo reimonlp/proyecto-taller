@@ -4,12 +4,16 @@ import { UserContext } from "../App"
 
 export const Controls = () => {
 
-  const { AgregarMensaje, socket } = useContext(UserContext)
+  const { socket, user, roomSelect } = useContext(UserContext)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    socket.emit('message', e.target[0].value)
-    AgregarMensaje(e.target[0].value)
+    const data = {
+      text: e.target[0].value,
+      username: user,
+      room: roomSelect
+    }
+    socket.emit('message', data)
     e.target[0].value = ''
     e.target[0].focus()
   }
@@ -17,7 +21,7 @@ export const Controls = () => {
   return (
     <section className="controls">
       <form onSubmit={handleSubmit}>
-        <input name="msg" placeholder="Escribe tu mensaje aquí..." />
+        <input name="msg" placeholder="Escribe tu mensaje aquí..." autoComplete="off" autoFocus />
         <button type="submit">Enviar</button>
       </form>
     </section>

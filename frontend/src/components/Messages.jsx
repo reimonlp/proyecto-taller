@@ -3,7 +3,8 @@ import { useContext } from 'react'
 import { UserContext } from '../App'
 import Tiempo from './Tiempo'
 
-const Message = ( {text, username, ts, own} ) => {
+const Message = ( {data} ) => {
+  const {text, username, ts, own} = data
   return (
     <div className={`message ${own ? 'own' : 'others'}`}>
       <div>
@@ -22,7 +23,7 @@ const Messages = () => {
     <section className="messages">
       {messages.map(
         message => {
-          return <Message key={message.id} text={message.text} username={message.username} ts={message.ts} own={message.own} />
+          return <Message key={message.id} data={message} />
         }
       )}
     </section>

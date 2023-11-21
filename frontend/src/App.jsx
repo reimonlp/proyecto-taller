@@ -1,66 +1,54 @@
 import './style.css'
+
 import Left from './components/Left'
 import Messages from './components/Messages'
 import Controls from './components/Controls'
+import Login from './components/Login'
+
 import { createContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
 export const UserContext = createContext()
+const socket = io('ws://localhost:3000', { transports: ['websocket', 'polling'] })
+
+socket.on('connect', () => {
+  // console.log('connected with id', socket.id)
+})
 
 function App() {
   const [messages, setMessages] = useState([])
   const [users, setUsers] = useState([])
   const [user, setUser] = useState('')
-
-  const AgregarMensaje = (mensaje) => {
-    setMessages([
-      ...messages,
-      {
-        id: messages.length + 1,
-        text: mensaje,
-        username: user,
-        ts: new Date(),
-        own: true,
-      },
-    ])
-  }
-
-  const socket = io('http://localhost:3000')
-  socket.on('connect', () => {
-    socket.on('message', (msg) => {
-      setMessages([
-        ...messages,
-        {
-          id: messages.length + 1,
-          text: msg,
-          username: 'Messi',
-          ts: new Date(),
-          own: false,
-        },
-      ])
-    })
-  })
+  const [roomSelect, setRoomSelect] = useState(false)
 
   const exports = {
     socket,
+    roomSelect, setRoomSelect,
     messages, setMessages,
     users, setUsers,
     user, setUser,
-    AgregarMensaje
   }
 
   useEffect(() => {
-    setUsers([
-      {id: 1, username: "Messi"},
-      {id: 2, username: "reimon"}
-    ])
+    socket.on('message', (data) => {
+      data.own = (socket.id === data.sid)
+      setMessages((m) => [...m, data])
+    })
+
+    socket.on('users', (data) => {
+      console.log(data)
+    })
   }, [])
+
+  useEffect(() => {
+    socket.emit('setUsername', user)  
+  }, [user])
 
   return (
     <UserContext.Provider value={exports}>
       <Left />
-      <Messages />
-      <Controls />
+      { !user ? <Login /> : <><Messages /><Controls /></> }
+      
     </UserContext.Provider>
   )
 }

@@ -12,9 +12,11 @@
 
 * {
   box-sizing: border-box;
+  outline: none;
 }
 
 body {
+  background: #000;
   margin: 0;
   padding: 1rem;
   font-size: var(--font-size-base);
@@ -59,12 +61,30 @@ section.messages {
   overflow-y: auto;
 }
 
+section.login {
+  grid-area: 1 / 2 / -1;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
 section.controls {
   grid-area: 2 / 2 / 3 / 3;
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-color);
   padding: 1rem;
   line-height: 1.5rem;
+}
+
+section.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 section.controls form {
@@ -75,11 +95,11 @@ section.controls form {
   justify-content: space-between;
 }
 
-section.controls form * {
-  outline: none;
+section.login form legend {
+  padding: 0.5rem;
 }
 
-section.controls input {
+section.controls input, section.login input {
   flex-grow: 1;
   margin-right: 1rem;
   padding: 0.5rem;
@@ -88,7 +108,7 @@ section.controls input {
   border-radius: 0.375rem;
 }
 
-section.controls button {
+section.controls button, section.login button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
   border: 0;
