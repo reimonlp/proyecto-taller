@@ -25,7 +25,24 @@ function App() {
     ])
   }
 
+  const socket = io('http://localhost:3000')
+  socket.on('connect', () => {
+    socket.on('message', (msg) => {
+      setMessages([
+        ...messages,
+        {
+          id: messages.length + 1,
+          text: msg,
+          username: 'Messi',
+          ts: new Date(),
+          own: false,
+        },
+      ])
+    })
+  })
+
   const exports = {
+    socket,
     messages, setMessages,
     users, setUsers,
     user, setUser,
@@ -33,16 +50,6 @@ function App() {
   }
 
   useEffect(() => {
-    const socket = io('http://localhost:3000')
-    socket.on('connect', () => {
-      console.log('conectado')
-    })
-
-    setMessages([
-      {id: 1, text: "hola, cómo estás?", username: "Messi", ts: "2023-11-19T10:45:00.000Z", own: false},
-      {id: 2, text: "todo bien y vos?", username: "reimon", ts: "2023-11-20T10:46:10.000Z", own: true}
-    ])
-
     setUsers([
       {id: 1, username: "Messi"},
       {id: 2, username: "reimon"}
