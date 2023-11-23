@@ -1,11 +1,25 @@
 import Users from './Users'
+import { useContext } from 'react'
+import { UserContext } from '../App'
 
 const Left = () => {
+  const { setUser, setUsers, setMessages, socket, user } = useContext(UserContext)
+  
+  const handleLogout = () => {
+    setUser('')
+    setUsers([])
+    setMessages([])
+    socket.emit('logout')
+  }
+
   return (
     <section className="left">
       <header>
         <span>Chat Room</span>
-        <button title="Salir del Chat Room"><Exit /></button>
+        { user ?
+          <button title="Salir del Chat Room" onClick={handleLogout}><Exit /></button>
+          : null
+        }
       </header>
       <Users />
     </section>

@@ -11,10 +11,6 @@ import { io } from 'socket.io-client'
 export const UserContext = createContext()
 const socket = io('ws://localhost:3000', { transports: ['websocket', 'polling'] })
 
-socket.on('connect', () => {
-  // console.log('connected with id', socket.id)
-})
-
 function App() {
   const [messages, setMessages] = useState([])
   const [users, setUsers] = useState([])
@@ -30,18 +26,24 @@ function App() {
   }
 
   useEffect(() => {
+    socket.on('messages', (data) => {
+      data.forEach(m => m.own = (socket.id === m.sid))
+      setMessages(data)
+    })
+
     socket.on('message', (data) => {
       data.own = (socket.id === data.sid)
       setMessages((m) => [...m, data])
     })
 
     socket.on('users', (data) => {
-      console.log(data)
+      //console.log('users:', data)
+      setUsers(data)
     })
   }, [])
 
   useEffect(() => {
-    socket.emit('setUsername', user)  
+    if (user) socket.emit('setUsername', user)  
   }, [user])
 
   return (

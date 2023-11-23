@@ -5,11 +5,15 @@ import { UserContext } from '../App'
 const Users = () => {
   const {users} = useContext(UserContext)
 
-  return (
-    <ul className="users">
-      {users.map(user => <User key={user.id} username={user.username} />)}
-    </ul>
-  )
+  console.log('users', users)
+
+  if (users) {
+    return (
+      <ul className='users'>
+        { Object.keys(users).map(i => <User key={i} username={users[i]} />) }
+      </ul>
+    )
+  }
 }
 
 const User = ( {username} ) => {
