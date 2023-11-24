@@ -1,6 +1,8 @@
-import moment from 'moment'
+/* eslint-disable react/prop-types */
 import { useMemo, useState } from 'react'
+import moment from 'moment'
 
+// Se configura moment para que muestre los tiempos en español
 moment.locale('es')
 moment.updateLocale('es', {
   calendar : {
@@ -38,20 +40,26 @@ moment.updateLocale('es', {
   },
 })
 
-// eslint-disable-next-line react/prop-types
+// Componente para mostrar el tiempo transcurrido
 const Tiempo = ( {ts} ) => {
   const [timeDiff, setTimeDiff] = useState('')
 
-  
   useMemo(() => {
+    // Obtiene la fecha del timestamp
     const theDate = new Date(ts)
+
+    // Crea un objeto moment con la fecha
     const mom = moment(theDate)
+
+    // Actualiza el tiempo transcurrido cada minuto
     const interval = setInterval(() => {
       setTimeDiff(mom.fromNow())
     }, 60000)
 
+    // Actualiza el tiempo transcurrido por primera vez
     setTimeDiff(mom.fromNow())
 
+    // Elimina el intervalo cuando se desmonta el componente
     return () => {
       clearInterval(interval)
     }
