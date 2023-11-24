@@ -16,10 +16,7 @@ const Left = () => {
     <section className="left">
       <header>
         <span>Chat Room</span>
-        { user ?
-          <button title="Salir del Chat Room" onClick={handleLogout}><Exit /></button>
-          : null
-        }
+        { user ? <button title="Logout" onClick={handleLogout}><Exit /></button> : null }
       </header>
       <Users />
     </section>
