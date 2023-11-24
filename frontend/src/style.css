@@ -8,6 +8,7 @@
   --border-color: #A8AEB9;
   --text-color-primary: #FFFFFF;
   --text-color-secondary: #374151;
+  --text-color-alt: #ed1b18;
 }
 
 * {
@@ -100,6 +101,16 @@ section.login form fieldset {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+section.login #status {
+  width: 100%;
+  min-height: 1rem;
+  text-wrap: balance;
+  border: none;
+  text-align: center;
+  color: var(--text-color-alt);
+  font-weight: bold;
 }
 
 section.controls input, section.login input {
@@ -204,6 +215,11 @@ section.controls button, section.login button {
   font-weight: 600;
   opacity: 0.8;
   width: 100%;
+}
+
+.users .me {
+  opacity: 1;
+  color: var(--text-color-alt);
 }
 
 .users li:hover {
