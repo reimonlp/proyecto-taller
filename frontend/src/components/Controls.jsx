@@ -1,20 +1,26 @@
-/* eslint-disable no-unused-vars */
 import { useContext } from "react"
 import { UserContext } from "../App"
 
+// Componente para enviar mensajes
 export const Controls = () => {
-
-  const { socket, user, roomSelect } = useContext(UserContext)
+  // Obtiene las variables de estado y funciones
+  // para actualizarlas
+  const { socket, user } = useContext(UserContext)
 
   const handleSubmit = (e) => {
+    // Evita que se recargue la página
     e.preventDefault()
-    const data = {
-      text: e.target[0].value,
-      username: user,
-      room: roomSelect
-    }
+
+    // Obtiene el mensaje del formulario
+    const data = { text: e.target[0].value, username: user }
+
+    // Envía el mensaje al servidor
     socket.emit('message', data)
+
+    // Limpia el formulario
     e.target[0].value = ''
+
+    // Pone el foco en el formulario
     e.target[0].focus()
   }
 
