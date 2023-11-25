@@ -20,8 +20,7 @@ function App() {
   const [messages, setMessages] = useState([])
   const [users, setUsers] = useState([])
 
-  // Referencia para el nombre de usuario
-  // se usa para evitar que se actualice
+  // Referencia para el nombre de usuario se usa para evitar que se actualice
   // el componente cuando cambia
   const username = useRef(false)
 
@@ -34,8 +33,7 @@ function App() {
     if (u) socket.emit('setUsername', u)
   }
 
-  // Objeto con las variables de estado y funciones
-  // para actualizarlas
+  // Objeto con las variables de estado y funciones para actualizarlas
   const exports = {
     socket,
     messages, setMessages,
@@ -45,10 +43,11 @@ function App() {
 
   // Efecto para recibir los mensajes y usuarios
   useEffect(() => {
+    
     // Recibe los mensajes viejos del servidor
     socket.on('messages', (data) => {
-      // Agrega la propiedad "own" a los mensajes
-      // para saber si son propios o de otros usuarios
+
+      // Agrega la propiedad "own" a los mensajes para saber si son propios
       data.forEach(m => m.own = (username.current === m.username))
 
       // Actualiza los mensajes
@@ -57,16 +56,15 @@ function App() {
 
     // Recibe los mensajes nuevos del servidor
     socket.on('message', (data) => {
-      // Agrega la propiedad "own" al mensaje
-      // para saber si es propio o de otro usuario
+
+      // Agrega la propiedad "own" al mensaje para saber si es propio
       data.own = (username.current === data.username)
 
       // Actualiza los mensajes
       setMessages((m) => [...m, data])
     })
 
-    // Recibe los usuarios del servidor
-    // y los guarda en la variable de estado
+    // Recibe los usuarios del servidor y los guarda en la variable de estado
     socket.on('users', (data) => setUsers(data))
   }, [])
 
