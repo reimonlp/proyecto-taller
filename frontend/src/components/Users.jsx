@@ -1,14 +1,10 @@
 /* eslint-disable react/prop-types */
-import { useContext } from 'react'
-import { UserContext } from '../App'
+import { useInit } from '../hooks/handles'
 
 // Componente para mostrar los usuarios
 const Users = () => {
-  // Obtiene los usuarios del contexto
-  // para mostrarlos
-  const {users} = useContext(UserContext)
+  const {users} = useInit()
   
-  // Si hay usuarios los muestra
   if (users) {
     return (
       <ul className='users'>
@@ -19,15 +15,12 @@ const Users = () => {
 }
 
 // Componente para mostrar un usuario
-const User = ( {username} ) => {
-  // Obtiene el nombre de usuario propio
-  const {user} = useContext(UserContext)
+const User = ( {username: u} ) => {
+  const {username} = useInit()
 
   return (
-    // Si el usuario es propio lo marca
-    <li><span className={ username === user ? 'me' : null }>{username}</span></li>
+    <li><span className={ username === u ? 'me' : null }>{u}</span></li>
   )
 }
-
 
 export default Users

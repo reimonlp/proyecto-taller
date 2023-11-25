@@ -1,33 +1,8 @@
-import { useContext } from 'react'
-import { UserContext } from '../App'
-import axios from 'axios'
+import { useLogin } from "../hooks/handles"
 
 // Componente para el inicio de sesión
 const Login = () => {
-  const {setUser} = useContext(UserContext)
-
-  // Función para el inicio de sesión
-  const handleLogin = (e) => {
-    // Evita que se recargue la página
-    e.preventDefault()
-
-    // Obtiene los datos del formulario
-    const form = new FormData(e.target)
-
-    // Oculta el mensaje de error
-    const status = document.getElementById('status')
-    status.setAttribute('hidden', true)
-
-    // Envía los datos al servidor
-    axios.post( 'http://localhost:3000/login', Object.fromEntries(form.entries()) )
-    // Si el inicio de sesión es exitoso, se guarda el nombre de usuario
-    .then( ({data}) => setUser(data.displayName) )
-    // Si el inicio de sesión falla, se muestra el error
-    .catch( (err) => {
-      status.textContent = err.response.data.error
-      status.removeAttribute('hidden')
-    })
-  }
+  const handleLogin = useLogin()  // Obtiene la función del hook
 
   // Formulario para el inicio de sesión
   return (
