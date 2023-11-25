@@ -51,8 +51,8 @@ App.post('/login', (req, res) => {
     return res.json({ displayName: username })
 })
 
-// una vez que se conecta un usuario se crea una instancia de socket para esa conexión
-// se escucha los eventos que emite el cliente y se emiten los eventos que correspondan
+// una vez que se conecta un usuario; se crea una instancia de socket para esa conexiónn
+// se escuchan los eventos que emite el cliente y se emiten los eventos que correspondan
 //
 io.on('connection', (socket) => {
 
