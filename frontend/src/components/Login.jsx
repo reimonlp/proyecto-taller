@@ -6,17 +6,13 @@ import axios from 'axios'
 const Login = () => {
   const {setUser} = useContext(UserContext)
 
-  // Función para el inicio de sesión
   const handleLogin = (e) => {
-    // Evita que se recargue la página
-    e.preventDefault()
+    e.preventDefault()    // Evita que se recargue la página
 
-    // Obtiene los datos del formulario
-    const form = new FormData(e.target)
+    const form = new FormData(e.target)    // Obtiene los datos del formulario
 
-    // Oculta el mensaje de error
     const status = document.getElementById('status')
-    status.setAttribute('hidden', true)
+    status.setAttribute('hidden', true)    // Oculta el mensaje de error
 
     // Envía los datos al servidor
     axios.post( 'http://localhost:3000/login', Object.fromEntries(form.entries()) )
@@ -29,7 +25,6 @@ const Login = () => {
     })
   }
 
-  // Formulario para el inicio de sesión
   return (
     <section className="login">
       <form onSubmit={handleLogin}>

@@ -32,9 +32,7 @@ const db = new sqlite.Database('./db.sqlite3', (err) => {
   if (err) throw err;
   
   // Se crea la tabla de mensajes si no existe
-  db.run(
-    "CREATE TABLE IF NOT EXISTS messages (id TEXT(37) PRIMARY KEY, username TEXT(50) NOT NULL, text TEXT NOT NULL, ts DATETIME DEFAULT CURRENT_TIMESTAMP)"
-  )
+  db.run( "CREATE TABLE IF NOT EXISTS messages (id TEXT(37) PRIMARY KEY, username TEXT(50) NOT NULL, text TEXT NOT NULL, ts DATETIME DEFAULT CURRENT_TIMESTAMP)" )
 
   // Se inicia el servidor
   server.listen(3000, () => console.log('listening on *:3000') );
@@ -53,19 +51,13 @@ App.post('/login', (req, res) => {
     return res.json({ displayName: username })
 })
 
-// una vez que se conecta un usuario se crea
-// una instancia de socket para esa conexión
-// se escucha los eventos que emite el cliente
-// y se emiten los eventos que correspondan
+// una vez que se conecta un usuario se crea una instancia de socket para esa conexión
+// se escucha los eventos que emite el cliente y se emiten los eventos que correspondan
 //
 io.on('connection', (socket) => {
 
   // elimina los mensajes con más de 60 minutos de antiguedad
-  db.run("DELETE FROM messages WHERE ts < datetime('now', '-60 minutes')", [],
-    (err) => {
-      if (err) throw err
-    }
-  )
+  db.run("DELETE FROM messages WHERE ts < datetime('now', '-60 minutes')" )
 
   // evento: setUsername
   // - se recibe el username del cliente y se guarda en el socket
@@ -79,8 +71,7 @@ io.on('connection', (socket) => {
     io.emit('users', connectedUsers)
     
     db.all(
-      "SELECT * FROM messages WHERE ts > datetime('now', '-30 minutes')",
-      [],
+      "SELECT * FROM messages WHERE ts > datetime('now', '-30 minutes')", [],
       (err, rows) => {
         if (err) throw err
         socket.emit('messages', rows)
@@ -129,7 +120,7 @@ io.on('connection', (socket) => {
     
     // se guarda el mensaje en la base de datos
     db.run(
-      "INSERT INTO messages (id, username, text, ts) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
+      "INSERT INTO messages (id, username, text) VALUES (?, ?, ?)",
       [emitData.id, connectedUsers[socket.id], data.text]
     )
   })

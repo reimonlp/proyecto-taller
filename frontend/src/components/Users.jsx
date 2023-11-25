@@ -4,9 +4,8 @@ import { UserContext } from '../App'
 
 // Componente para mostrar los usuarios
 const Users = () => {
-  // Obtiene los usuarios del contexto
-  // para mostrarlos
-  const {users} = useContext(UserContext)
+
+  const {users} = useContext(UserContext)  // Obtiene los usuarios del contexto
   
   // Si hay usuarios los muestra
   if (users) {
