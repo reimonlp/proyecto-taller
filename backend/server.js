@@ -1,10 +1,3 @@
-
-// Se importa el módulo Server de socket.io
-const { Server } = require("socket.io");
-
-// Se importa el módulo sqlite3
-const sqlite = require('sqlite3').verbose();
-
 // Se importan los módulos express y cors
 const express = require('express');
 const cors = require('cors');
@@ -12,6 +5,9 @@ const http = require('http');
 
 // Se crea una instancia de express
 const App = express();
+
+// Se importa el módulo Server de socket.io
+const { Server } = require("socket.io");
 
 // Se crea una instancia del servidor http con la instancia de express
 const server = http.createServer(App);
@@ -25,6 +21,9 @@ App.use(express.json())
 
 // Se crea un objeto para guardar los usuarios conectados
 const connectedUsers = {}
+
+// Se importa el módulo sqlite3
+const sqlite = require('sqlite3').verbose();
 
 // Se crea una instancia de la base de datos
 const db = new sqlite.Database('./db.sqlite3', (err) => {
@@ -43,8 +42,8 @@ const db = new sqlite.Database('./db.sqlite3', (err) => {
 App.post('/login', (req, res) => {
   const {username} = req.body
 
-  // si el usuario ya existe se devuelve un error
   if (Object.values(connectedUsers).includes(username))
+  // si el usuario ya existe se devuelve un error
     return res.status(401).json({ error: "Ya existe ese usuario" });
   else 
   // si el usuario no existe se devuelve el nombre de usuario
@@ -120,7 +119,7 @@ io.on('connection', (socket) => {
     
     // se guarda el mensaje en la base de datos
     db.run(
-      "INSERT INTO messages (id, username, text) VALUES (?, ?, ?)",
+      "INSERT INTO messages (id, username, text) VALUES (?, ?, ?)", 
       [emitData.id, connectedUsers[socket.id], data.text]
     )
   })
