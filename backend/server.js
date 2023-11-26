@@ -37,19 +37,6 @@ const db = new sqlite.Database('./db.sqlite3', (err) => {
   server.listen(3000, () => console.log('listening on *:3000') );
 })  
 
-// Este codigo se encarga de procesar los post a la ruta /login,
-// se recibe un username y se valida que no exista ese usuario en el chat.
-App.post('/login', (req, res) => {
-  const {username} = req.body
-
-  if (Object.values(connectedUsers).includes(username))
-  // si el usuario ya existe se devuelve un error
-    return res.status(401).json({ error: "Ya existe ese usuario" });
-  else 
-  // si el usuario no existe se devuelve el nombre de usuario
-    return res.json({ displayName: username })
-})
-
 // una vez que se conecta un usuario; se crea una instancia de socket para esa conexiónn
 // se escuchan los eventos que emite el cliente y se emiten los eventos que correspondan
 //
@@ -64,18 +51,26 @@ io.on('connection', (socket) => {
   // - se emite a todos los clientes conectados la lista de usuarios
   // - se emiten los mensajes de los últimos 30 minutos al cliente
   //
-  socket.on('setUsername', (username) => {
-    socket.username = username
-    connectedUsers[socket.id] = username
-    io.emit('users', connectedUsers)
-    
-    db.all(
-      "SELECT * FROM messages WHERE ts > datetime('now', '-30 minutes')", [],
-      (err, rows) => {
-        if (err) throw err
-        socket.emit('messages', rows)
-      }
-    )
+  socket.on('login', ({username}) => {
+    if (username.length > 50 || username.length == 0)
+      return socket.emit('login_error', { error: "Nombre inválido" });
+
+    // si el usuario ya existe se devuelve un error
+    if (Object.values(connectedUsers).includes(username))
+      socket.emit('login_error', { error: "Ya existe ese usuario" });
+    else {
+      connectedUsers[socket.id] = username
+      
+      db.all(
+        "SELECT * FROM messages WHERE ts > datetime('now', '-30 minutes')", [],
+        (err, rows) => {
+          if (err) throw err
+          socket.emit('login_success', {username, users:connectedUsers, messages:rows})
+        }
+      )
+
+      socket.broadcast.emit('users', {users:connectedUsers})
+    }
   })
 
   // evento: logout
@@ -83,9 +78,8 @@ io.on('connection', (socket) => {
   // - se emite a todos los clientes conectados la lista de usuarios
   //
   socket.on('logout', () => {
-    if (!socket.username) return
     delete connectedUsers[socket.id]
-    io.emit('users', connectedUsers)
+    socket.broadcast.emit('users', connectedUsers)
   })
 
   // evento: disconnect
@@ -93,9 +87,8 @@ io.on('connection', (socket) => {
   // - se emite a todos los clientes conectados la lista de usuarios
   //
   socket.on('disconnect', () => {
-    if (!socket.username) return
     delete connectedUsers[socket.id]
-    io.emit('users', connectedUsers)
+    socket.broadcast.emit('users', connectedUsers)
   })
 
   // evento: message
@@ -107,6 +100,8 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
     const date = new Date();
 
+    if (data.text.length > 255 || data.text.length == 0) return
+
     // se agrega el id del socket y la fecha al mensaje
     const emitData = {
       ...data,
@@ -115,12 +110,12 @@ io.on('connection', (socket) => {
     }
 
     // se emite el mensaje a todos los clientes conectados
-    io.emit('message', emitData)
+    io.emit('new-message', emitData)
     
     // se guarda el mensaje en la base de datos
     db.run(
       "INSERT INTO messages (id, username, text) VALUES (?, ?, ?)", 
-      [emitData.id, connectedUsers[socket.id], data.text]
+      [emitData.id, data.username, data.text]
     )
   })
 })

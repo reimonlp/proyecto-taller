@@ -4,10 +4,10 @@ import { UserContext } from '../App'
 
 // Componente para mostrar la lista de usuarios conectados
 const Left = () => {
-  const { setUser, setUsers, setMessages, socket, user } = useContext(UserContext)
+  const { username, setUsername, setUsers, setMessages, socket } = useContext(UserContext)
   
   const handleLogout = () => {
-    setUser('')
+    setUsername(false)
     setUsers([])
     setMessages([])
     socket.emit('logout')
@@ -17,7 +17,7 @@ const Left = () => {
     <section className="left">
       <header>
         <span>Chat Room</span>
-        { user ? <button title="Logout" onClick={handleLogout}><Exit /></button> : null }
+        { username ? <button title="Logout" onClick={handleLogout}><Exit /></button> : null }
       </header>
       <Users />
     </section>

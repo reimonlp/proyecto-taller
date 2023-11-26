@@ -4,27 +4,28 @@ import { UserContext } from '../App'
 
 // Componente para mostrar los usuarios
 const Users = () => {
+  const {users, username} = useContext(UserContext)  // Obtiene los usuarios del contexto
 
-  const {users} = useContext(UserContext)  // Obtiene los usuarios del contexto
-  
-  // Si hay usuarios los muestra
-  if (users) {
+  if (users && username) {
     return (
       <ul className='users'>
-        { Object.keys(users).map(i => <User key={i} username={users[i]} />) }
+        {
+          Object.keys(users).sort((a, b) => users[a] > users[b] ? 1 : -1)
+            .map((i) => <User key={i} username={users[i]} /> )
+        }
       </ul>
     )
   }
 }
 
 // Componente para mostrar un usuario
-const User = ( {username} ) => {
+const User = ( {username: u} ) => {
   // Obtiene el nombre de usuario propio
-  const {user} = useContext(UserContext)
+  const {username} = useContext(UserContext)
 
   return (
     // Si el usuario es propio lo marca
-    <li><span className={ username === user ? 'me' : null }>{username}</span></li>
+    <li><span className={ u === username ? 'me' : null }>{u}</span></li>
   )
 }
 

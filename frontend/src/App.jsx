@@ -5,7 +5,7 @@ import Messages from './components/Messages'
 import Controls from './components/Controls'
 import Login from './components/Login'
 
-import { createContext, useEffect, useRef, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
 // Contexto para compartir datos entre componentes
@@ -19,47 +19,71 @@ function App() {
   // Variables de estado, al cambiarlas se actualizan los componentes
   const [messages, setMessages] = useState([])
   const [users, setUsers] = useState([])
-
+  const [username, setUsername] = useState(false)
+  
   // Referencia para el nombre de usuario, evita que se actualice el componente
-  const username = useRef(false)
-
-  // Función para guardar el nombre de usuario
-  const setUser = (u) => {
-    username.current = u
-    if (u) socket.emit('setUsername', u)    // Envía el nombre de usuario al servidor
-  }
-
-  const exports = {  // Objeto con las variables de estado y funciones para actualizarlas
-    socket, messages, setMessages, users, setUsers, user: username.current, setUser
-  }
-
+  
+  // Variables a exportar al contexto
+  const exports = { socket, messages, setMessages, users, setUsers, username, setUsername }
+  
   // Efecto para recibir los mensajes y usuarios
   useEffect(() => {
+    // EVENTO: TODOS
+    // Muestra todos los eventos que recibe el cliente
+    socket.onAny((e) => {
+      console.log(`EVENTO: ${e}`)
+    })
+
+    // EVENTO: login_success
+    // Al iniciar sesión guarda el nombre de usuario
+    socket.on('login_success', (data) => {
+      console.log(data)
+      setUsername(data.username)
+      setUsers(data.users)
+      data.messages.forEach(m => m.own = (data.username === m.username))    
+      setMessages(data.messages)
+    })  
     
-    // Recibe los mensajes viejos del servidor
-    socket.on('messages', (data) => {
-      // Agrega la propiedad "own" a los mensajes para saber si son propios
-      data.forEach(m => m.own = (username.current === m.username))
+    // EVENTO: login_error
+    // Al fallar el inicio de sesión muestra el error
+    socket.on('login_error', (err) => {
+      const status = document.getElementById('status')
+      status.setAttribute('hidden', true)
+      status.textContent = err.error
+      status.removeAttribute('hidden')
+    })  
+    
+    // EVENTO: disconnect
+    // Al desconectarse borra el nombre de usuario
+    socket.on('disconnect', () => setUsername(false))
 
-      setMessages(data)      // Actualiza los mensajes
-    })
+    if (username) {
+      // EVENTO: messages
+      // Recibe los mensajes viejos del servidor
+      socket.on('messages', (data) => {
+        data.forEach(m => m.own = (username === m.username))    
+        setMessages(data)
+      })
 
-    // Recibe los mensajes nuevos del servidor
-    socket.on('message', (data) => {
-      // Agrega la propiedad "own" al mensaje para saber si es propio
-      data.own = (username.current === data.username)
+      // EVENTO: message
+      // Recibe los mensajes nuevos del servidor
+      socket.on('new-message', (data) => {
+        data.own = (username === data.username)
+        setMessages((messages) => [...messages, data])
+      })
 
-      setMessages((m) => [...m, data])      // Actualiza los mensajes
-    })
-
-    // Recibe los usuarios del servidor y los guarda en la variable de estado
-    socket.on('users', (data) => setUsers(data))
-  }, [])
+      // EVENTO: users
+      // Recibe los usuarios del servidor y los guarda en la variable de estado
+      socket.on('users', (data) => {
+        setUsers(data.users)
+      })
+    }
+  }, [username])
 
   return (
     <UserContext.Provider value={exports}>
       <Left />
-      { !username.current ? <Login /> : <><Messages /><Controls /></> }
+      { !username ? <Login /> : <><Messages /><Controls /></> }
     </UserContext.Provider>
   )
 }
