@@ -37,7 +37,6 @@ function App() {
     // EVENTO: login_success
     // Al iniciar sesión guarda el nombre de usuario
     socket.on('login_success', (data) => {
-      console.log(data)
       setUsername(data.username)
       setUsers(data.users)
       data.messages.forEach(m => m.own = (data.username === m.username))    
@@ -53,18 +52,11 @@ function App() {
       status.removeAttribute('hidden')
     })  
     
-    // EVENTO: disconnect
-    // Al desconectarse borra el nombre de usuario
-    socket.on('disconnect', () => setUsername(false))
-
     if (username) {
-      // EVENTO: messages
-      // Recibe los mensajes viejos del servidor
-      socket.on('messages', (data) => {
-        data.forEach(m => m.own = (username === m.username))    
-        setMessages(data)
-      })
-
+      // EVENTO: disconnect
+      // Al desconectarse borra el nombre de usuario
+      socket.on('disconnect', () => setUsername(false))
+    
       // EVENTO: message
       // Recibe los mensajes nuevos del servidor
       socket.on('new-message', (data) => {

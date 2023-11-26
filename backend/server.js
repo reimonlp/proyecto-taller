@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
 
     // si el usuario ya existe se devuelve un error
     if (Object.values(connectedUsers).includes(username))
-      socket.emit('login_error', { error: "Ya existe ese usuario" });
+      return socket.emit('login_error', { error: "Ya existe ese usuario" });
     else {
       connectedUsers[socket.id] = username
       
@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
   //
   socket.on('logout', () => {
     delete connectedUsers[socket.id]
-    socket.broadcast.emit('users', connectedUsers)
+    socket.broadcast.emit('users', {users:connectedUsers})
   })
 
   // evento: disconnect
@@ -88,7 +88,7 @@ io.on('connection', (socket) => {
   //
   socket.on('disconnect', () => {
     delete connectedUsers[socket.id]
-    socket.broadcast.emit('users', connectedUsers)
+    socket.broadcast.emit('users', {users:connectedUsers})
   })
 
   // evento: message
