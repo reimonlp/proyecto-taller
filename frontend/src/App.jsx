@@ -21,8 +21,6 @@ function App() {
   const [users, setUsers] = useState([])
   const [username, setUsername] = useState(false)
   
-  // Referencia para el nombre de usuario, evita que se actualice el componente
-  
   // Variables a exportar al contexto
   const exports = { socket, messages, setMessages, users, setUsers, username, setUsername }
   
@@ -41,7 +39,7 @@ function App() {
       setUsers(data.users)
       data.messages.forEach(m => m.own = (data.username === m.username))    
       setMessages(data.messages)
-    })  
+    })
     
     // EVENTO: login_error
     // Al fallar el inicio de sesión muestra el error
@@ -50,7 +48,7 @@ function App() {
       status.setAttribute('hidden', true)
       status.textContent = err.error
       status.removeAttribute('hidden')
-    })  
+    })
     
     if (username) {
       // EVENTO: disconnect
