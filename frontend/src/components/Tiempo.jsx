@@ -23,6 +23,10 @@ const Tiempo = ( {ts} ) => {
   const [timeDiff, setTimeDiff] = useState('')
 
   useMemo(() => {
+    // Date y moment son librerías para trabajar con fechas
+    // Date convierte el timestamp en una fecha
+    // Moment permite mostrar el tiempo transcurrido de una fecha
+
     const theDate = new Date(ts)   // Obtiene la fecha del timestamp
     const mom = moment(theDate)    // Crea un objeto moment con la fecha
 
