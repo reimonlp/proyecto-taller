@@ -1,3 +1,5 @@
+const PORT = process.env.PORT || 3000;
+
 // Se importan los módulos express y cors
 const express = require('express');
 const cors = require('cors');
@@ -34,7 +36,7 @@ const db = new sqlite.Database('./db.sqlite3', (err) => {
   db.run( "CREATE TABLE IF NOT EXISTS messages (id TEXT(37) PRIMARY KEY, username TEXT(50) NOT NULL, text TEXT NOT NULL, ts DATETIME DEFAULT CURRENT_TIMESTAMP)" )
 
   // Se inicia el servidor
-  server.listen(3000, () => console.log('listening on *:3000') );
+  server.listen(PORT, () => console.log(`listening on *:${PORT}`) );
 })  
 
 // una vez que se conecta un usuario; se crea una instancia de socket para esa conexiónn
@@ -98,8 +100,8 @@ io.on('connection', (socket) => {
   // - se guarda el mensaje en la base de datos
   //
   socket.on('message', (data) => {
-    const date = new Date();
-
+    const date = new Date()
+    
     if (data.text.length > 255 || data.text.length == 0) return
 
     // se agrega el id del socket y la fecha al mensaje
@@ -114,7 +116,7 @@ io.on('connection', (socket) => {
     
     // se guarda el mensaje en la base de datos
     db.run(
-      "INSERT INTO messages (id, username, text) VALUES (?, ?, ?)", 
+      "INSERT INTO messages (id, username, text, ts) VALUES (?, ?, ?, CURRENT_TIMESTAMP)", 
       [emitData.id, data.username, data.text]
     )
   })
