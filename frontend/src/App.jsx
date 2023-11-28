@@ -37,7 +37,7 @@ function App() {
     socket.on('login_success', (data) => {
       setUsername(data.username)
       setUsers(data.users)
-      data.messages.forEach(m => m.own = (data.username === m.username))    
+      data.messages.forEach(m => m.own = (data.username === m.username))
       setMessages(data.messages)
     })
     
@@ -45,7 +45,6 @@ function App() {
     // Al fallar el inicio de sesión muestra el error
     socket.on('login_error', (err) => {
       const status = document.getElementById('status')
-      status.setAttribute('hidden', true)
       status.textContent = err.error
       status.removeAttribute('hidden')
     })
@@ -55,7 +54,7 @@ function App() {
       // Al desconectarse borra el nombre de usuario
       socket.on('disconnect', () => setUsername(false))
     
-      // EVENTO: message
+      // EVENTO: new-message
       // Recibe los mensajes nuevos del servidor
       socket.on('new-message', (data) => {
         data.own = (username === data.username)
@@ -68,6 +67,8 @@ function App() {
         setUsers(data.users)
       })
     }
+
+    return () => socket.offAny()
   }, [username])
 
   return (

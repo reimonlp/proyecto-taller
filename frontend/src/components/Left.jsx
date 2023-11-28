@@ -11,6 +11,7 @@ const Left = () => {
     setUsers([])
     setMessages([])
     socket.emit('logout')
+    socket.offAny()
   }
 
   return (
