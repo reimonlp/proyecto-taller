@@ -30,6 +30,7 @@
   "eslintConfig": {
     "extends": [
       "./node_modules/standard/eslintrc.json"
-    ]
+    ],
+    "parser": "@swc-node/eslint-parser"
   }
 }
