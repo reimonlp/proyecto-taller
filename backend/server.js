@@ -21,7 +21,10 @@ App.use(cors())
 // Se configura el servidor para que acepte peticiones con el formato JSON
 App.use(express.json())
 
-App.use(express.static('www'))
+const path = require('path')
+const __dirname = path.resolve('.')
+
+App.use(express.static(path.join(__dirname, 'www')))
 
 // Se crea un objeto para guardar los usuarios conectados
 const connectedUsers = {}
