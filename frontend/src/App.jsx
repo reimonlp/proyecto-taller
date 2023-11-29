@@ -11,8 +11,11 @@ import { io } from 'socket.io-client'
 // Contexto para compartir datos entre componentes
 export const UserContext = createContext()
 
+// detectar la url del servidor
+const url = window.location.href.split('/')[2]
+
 // Conexión websocket con el servidor
-const socket = io('ws://localhost:3000', { transports: ['websocket', 'polling'] })
+const socket = io(`ws://${url}`, { transports: ['websocket', 'polling'] })
 
 // Componente principal
 function App() {
