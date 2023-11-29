@@ -12,7 +12,7 @@ import { io } from 'socket.io-client'
 export const UserContext = createContext()
 
 // detectar si usamos http o https
-const protocol = window.location.protocol === 'http:' ? 'http' : 'https'
+const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss'
 
 // detectar la url del servidor
 const url = window.location.href.split('/')[2]
