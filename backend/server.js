@@ -22,7 +22,6 @@ App.use(cors())
 App.use(express.json())
 
 const path = require('path')
-const __dirname = path.resolve('.')
 
 App.use(express.static(path.join(__dirname, 'www')))
 
