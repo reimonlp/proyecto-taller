@@ -21,6 +21,8 @@ App.use(cors())
 // Se configura el servidor para que acepte peticiones con el formato JSON
 App.use(express.json())
 
+App.use(express.static('www'))
+
 // Se crea un objeto para guardar los usuarios conectados
 const connectedUsers = {}
 
