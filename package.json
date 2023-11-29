@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"cd backend && npm start\" \"cd frontend && npm run dev\"",
-    "buuild": "cd frontend && npm run build"
+    "build": "cd frontend && npm run build"
   },
   "keywords": [],
   "author": "",
